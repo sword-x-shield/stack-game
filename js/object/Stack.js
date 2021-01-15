@@ -4,6 +4,25 @@ import { randomIntegerInRange, randomNumberInRange } from '../utils/index'
 import { gsap } from  '../gsap/gsap'
 import Base from './Base'
 import Cube from './Cube'
+/**
+ * 游戏本体类
+ * @extends Base
+ * @param {Object} cameraParams 相机参数
+ * @param {Vector3} cameraPosition 相机放置位置
+ * @param {Vector3} lookAtPosition 相机朝向
+ * @param {Number} colorOffset 颜色偏移量（用于决定下一个方块的颜色）
+ * @param {Number} level 当前关卡
+ * @param {Number} currentY 当前底部的y轴坐标
+ * @param {Boolean} started 游戏是否开始
+ * @param {'paused'|'running'|'end'} state 当前游戏状态
+ * @param {Number} speed 当前盒子的移动速度
+ * @param {Object} cubeParams 当前盒子的参数
+ * @param {Cube} box 当前盒子
+ * @param {Number} moveLimit 边界
+ * @param {'x'|'z'} moveAxis 沿何轴开始移动
+ * @param {'width'| 'depth'} moveEdge 移动时变更的属性
+ * 
+ */
 export default class Stack extends Base {
   cameraParams;
   cameraPosition;
@@ -18,6 +37,8 @@ export default class Stack extends Base {
   currentY;
   state;
   speed;
+  speedLimit = 0.06;
+  moveLimit = 1.2;
   constructor() {
     super()
     this.cameraParams = {};
@@ -30,10 +51,7 @@ export default class Stack extends Base {
     this.cubeParams = { width: 1, height: 0.2, depth: 1, x: 0, y: 0, z: 0, color: new Color("#d9dfc8") };
     this.started = false
     this.state = 'paused'
-    this.moveLimit = 1.2
     this.speed = 0.02
-    this.speedLimit = 0.06
-    this.score = 0
   }
   /**
    * 基于屏幕大小更新当前相机的各项参数
