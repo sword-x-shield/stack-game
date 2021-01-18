@@ -29,7 +29,6 @@ export default class Base {
     this.createCamera() 
     this.createRenderer()
     this.createLight()
-    this.box = this.createBox({})
     this.animate()
   }
   /** 创建场景 */
@@ -53,6 +52,7 @@ export default class Base {
     })
     this.renderer.setSize(this.width, this.height);
     this.renderer.setClearColor(0x409EFF, 1.0);
+    this.renderer.autoClear = false
     canvas.width = this.width * this.devicePixelRatio;
     canvas.height = this.height * this.devicePixelRatio;
     this.renderer.setPixelRatio(this.devicePixelRatio);
@@ -70,11 +70,22 @@ export default class Base {
   update() {
 
   }
+  beforeRender() {
+    this.renderer.clear();
+  }
+  /**
+   * 后渲染钩子
+   */
+  afterRender() {
+
+  }
   /** 渲染，会一直运行 */
   animate() {
     this.renderer.setAnimationLoop(() => {
+      this.beforeRender()
       this.update()
       this.renderer.render(this.scene,this.camera)
+      this.afterRender()
     })
   }
 }

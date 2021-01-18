@@ -1,9 +1,10 @@
 
-import { OrthographicCamera, Mesh, CameraHelper, Color, Vector3 } from '../threejs/three.js'
+import { OrthographicCamera, Mesh, Color, Vector3 } from '../threejs/three.js'
 import { randomIntegerInRange, randomNumberInRange } from '../utils/index'
 import { gsap } from  '../gsap/gsap'
 import Base from './Base'
 import Cube from './Cube'
+import ScoreText from './ScoreText'
 /**
  * 游戏本体类
  * @extends Base
@@ -16,12 +17,12 @@ import Cube from './Cube'
  * @param {Boolean} started 游戏是否开始
  * @param {'paused'|'running'|'end'} state 当前游戏状态
  * @param {Number} speed 当前盒子的移动速度
+ * @param {Number} speedLimit 速度上限
  * @param {Object} cubeParams 当前盒子的参数
  * @param {Cube} box 当前盒子
  * @param {Number} moveLimit 边界
  * @param {'x'|'z'} moveAxis 沿何轴开始移动
  * @param {'width'| 'depth'} moveEdge 移动时变更的属性
- * 
  */
 export default class Stack extends Base {
   cameraParams;
@@ -82,7 +83,6 @@ export default class Stack extends Base {
     camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
     camera.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
     this.camera = camera;
-    this.scene.add(new CameraHelper( camera ))
   }
   /**
    * 创建一个盒子
@@ -93,6 +93,14 @@ export default class Stack extends Base {
     const cube = new Cube(cubeParams)
     this.scene.add(cube.mesh);
     return cube.mesh
+  }
+  /**
+   * 创建hud
+   */
+  createHud() {
+    this.scoreText = new ScoreText(this.renderer)
+    this.scoreText.init()
+    console.log('HUD inited')
   }
   /**
    * 为场景添加全局的绑定事件
@@ -114,7 +122,7 @@ export default class Stack extends Base {
     baseParams.height = baseHeight;
     baseParams.y -= (baseHeight - this.cubeParams.height) / 2;
     const base = this.createCube(baseParams);
-    this.box = base;
+    this.cube = base;
     this.createLight();
     this.updateColor();
     this.addEvent();
@@ -125,21 +133,22 @@ export default class Stack extends Base {
    */
   startGame() {
     this.started = true
+    this.createHud()
     this.nextLevel()
   }
   /**
    * 切割方块，当用户点击放置方块时，判断是否游戏结束，未结束则切割保留有效的部分。
    */
   cutOverlap() {
-    const { cubeParams, moveEdge, box, moveAxis, camera } = this;
-    const curPosition = box.position[moveAxis]
+    const { cubeParams, moveEdge,cube, moveAxis, camera } = this;
+    const curPosition = cube.position[moveAxis]
     const prevPosition = cubeParams[moveAxis]
     const direction = Math.sign(curPosition - prevPosition)
     const edge = cubeParams[moveEdge]
     // 重叠距离 = 上一个方块的边长 + 方向 * (上一个方块位置 - 当前方块位置)
     const overlap = edge + direction * (prevPosition - curPosition);
     // 移除现有盒子（后面使用新建的两个盒子实现切除效果）
-    this.scene.remove(box)
+    this.scene.remove(cube)
     // 没有重叠的部分就输了
     if(overlap <= 0) {
       this.gameOver()
@@ -168,10 +177,10 @@ export default class Stack extends Base {
   }
   /**
    * 创建需要被切除部分的盒子
-   * @param {*} prevPosition 此前的位置
-   * @param {*} direction 方向
-   * @param {*} edge 
-   * @param {*} overlap 
+   * @param {Number} prevPosition 此前的位置
+   * @param {1|-1} direction 方向
+   * @param {Number} edge 切除基础线，超过此值的会被切掉
+   * @param {Number} overlap 有效长度
    */
   createWastedCube(prevPosition, direction, edge, overlap) {
     const { cubeParams, currentY, moveEdge, moveAxis } = this
@@ -186,17 +195,17 @@ export default class Stack extends Base {
   }
   /**
    * 使某个盒子自由落体
-   * @param {Cube} box 目标盒子
+   * @param {Cube} cube 目标盒子
    */
-  makeDrop(box) {
+  makeDrop(cube) {
     const { moveAxis } = this;
-    gsap.to(box.position, {
+    gsap.to(cube.position, {
       y: "-=3.2",
       ease: "power1.easeIn",
       duration: 1.5,
-      onComplete: () =>  this.scene.remove(box)
+      onComplete: () =>  this.scene.remove(cube)
     });
-    gsap.to(box.rotation, {
+    gsap.to(cube.rotation, {
       delay: 0.1,
       x: moveAxis === "z" ? randomNumberInRange(4, 5) : 0.1,
       y: 0.1,
@@ -215,6 +224,7 @@ export default class Stack extends Base {
    * 下一关的逻辑
    */
   nextLevel() {
+    this.scoreText.update(this.level)
     this.level++;
     this.moveAxis = this.level % 2 ? "x" : "z";
     this.moveEdge = this.level % 2 ? "width" : "depth";
@@ -223,9 +233,9 @@ export default class Stack extends Base {
     this.currentY += cubeParams.height
     cubeParams.y = this.currentY;
     const box = this.createCube(cubeParams);
-    this.box = box;
+    this.cube = box;
     // 确定初始移动位置
-    this.box.position[this.moveAxis] = this.moveLimit * -1;
+    this.cube.position[this.moveAxis] = this.moveLimit * -1;
     this.state = "running";
     if (this.level > 1) {
       this.updateCameraHeight();
@@ -253,11 +263,16 @@ export default class Stack extends Base {
   update() {
     if (this.state === "running") {
       const { moveAxis } = this;
-      this.box.position[moveAxis] += this.speed;
+      this.cube.position[moveAxis] += this.speed;
       // 移到末端就反转方向
-      if (Math.abs(this.box.position[moveAxis]) > this.moveLimit) {
+      if (Math.abs(this.cube.position[moveAxis]) > this.moveLimit) {
         this.speed = this.speed * -1;
       }
+    }
+  }
+  afterRender() {
+    if(this.scoreText && this.state !== 'paused') {
+      this.scoreText.update(this.level - 2)
     }
   }
 }
