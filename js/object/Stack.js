@@ -232,9 +232,9 @@ export default class Stack extends Base {
     this.cube = box;
     // 确定初始移动位置
     this.cube.position[this.moveAxis] = this.moveLimit * -1;
-    if (this.level > 1) {
+    if (this.level >= 1) {
       this.updateCameraHeight();
-      this.speed < this.speedLimit && (this.speed += 0.005)
+      this.speed < this.speedLimit && (this.speed += 0.002)
     }
   }
   /**
