@@ -4,7 +4,8 @@ import { randomIntegerInRange, randomNumberInRange } from '../utils/index'
 import { gsap } from  '../gsap/gsap'
 import Base from './Base'
 import Cube from './Cube'
-import ScoreText from './ScoreText'
+import Hud from '../ui/GameHud'
+import eventEmiter from '../utils/eventEmiter.js'
 /**
  * 游戏本体类
  * @extends Base
@@ -14,7 +15,6 @@ import ScoreText from './ScoreText'
  * @param {Number} colorOffset 颜色偏移量（用于决定下一个方块的颜色）
  * @param {Number} level 当前关卡
  * @param {Number} currentY 当前底部的y轴坐标
- * @param {Boolean} started 游戏是否开始
  * @param {'paused'|'running'|'end'} state 当前游戏状态
  * @param {Number} speed 当前盒子的移动速度
  * @param {Number} speedLimit 速度上限
@@ -34,7 +34,6 @@ export default class Stack extends Base {
   moveEdge;
   moveLimit;
   level;
-  started;
   currentY;
   state;
   speed;
@@ -47,10 +46,9 @@ export default class Stack extends Base {
     this.cameraPosition = new Vector3(2, 2, 2);
     this.lookAtPosition = new Vector3(0, 0, 0);
     this.colorOffset = randomIntegerInRange(0, 255);
-    this.level = 1;
+    this.level = 0;
     this.currentY = 0;
     this.cubeParams = { width: 1, height: 0.2, depth: 1, x: 0, y: 0, z: 0, color: new Color("#d9dfc8") };
-    this.started = false
     this.state = 'paused'
     this.speed = 0.02
   }
@@ -98,16 +96,14 @@ export default class Stack extends Base {
    * 创建hud
    */
   createHud() {
-    this.scoreText = new ScoreText(this.renderer)
-    this.scoreText.init()
-    console.log('HUD inited')
+    this.hud = new Hud(this.renderer)
   }
   /**
    * 为场景添加全局的绑定事件
    */
   addEvent() {
     wx.onTouchStart((result) => {
-      this.level === 1 ? this.startGame() : this.cutOverlap()
+      this.level === 0 ? this.startGame() : this.cutOverlap()
     })
   }
   /**
@@ -126,14 +122,14 @@ export default class Stack extends Base {
     this.createLight();
     this.updateColor();
     this.addEvent();
+    this.createHud();
     this.animate();
   }
   /**
    * 开始游戏
    */
   startGame() {
-    this.started = true
-    this.createHud()
+    this.stateChange('running')
     this.nextLevel()
   }
   /**
@@ -217,15 +213,15 @@ export default class Stack extends Base {
    * 处理游戏结束的逻辑
    */
   gameOver() {
-    this.started = false;
-    this.state = 'end'
+    this.stateChange('end')
   }
   /**
    * 下一关的逻辑
    */
   nextLevel() {
-    this.scoreText.update(this.level)
     this.level++;
+    // 发布关卡变更广播
+    $emit('levelChange',this.level)
     this.moveAxis = this.level % 2 ? "x" : "z";
     this.moveEdge = this.level % 2 ? "width" : "depth";
     this.updateColor();
@@ -236,7 +232,6 @@ export default class Stack extends Base {
     this.cube = box;
     // 确定初始移动位置
     this.cube.position[this.moveAxis] = this.moveLimit * -1;
-    this.state = "running";
     if (this.level > 1) {
       this.updateCameraHeight();
       this.speed < this.speedLimit && (this.speed += 0.005)
@@ -258,6 +253,13 @@ export default class Stack extends Base {
     });
   }
   /**
+   * 更新游戏当前状态
+   */
+  stateChange(state) {
+    this.state = state
+    $emit('stateChange',state)
+  } 
+  /**
    * 动画更新，逐帧调用
    */
   update() {
@@ -270,9 +272,10 @@ export default class Stack extends Base {
       }
     }
   }
+  /**
+   * 副屏渲染用的钩子
+   */
   afterRender() {
-    if(this.scoreText && this.state !== 'paused') {
-      this.scoreText.update(this.level - 2)
-    }
+    this.hud.render()
   }
 }
