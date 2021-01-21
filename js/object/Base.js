@@ -1,4 +1,4 @@
-import { Scene, WebGLRenderer, AmbientLight, PerspectiveCamera, DirectionalLight, Color} from '../threejs/three.js'
+import { Scene, WebGLRenderer, AmbientLight, PerspectiveCamera, DirectionalLight, Color} from '../libs/three.js'
 const Context = canvas.getContext('webgl');
 /**
  * 基础场景类

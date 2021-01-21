@@ -1,7 +1,7 @@
 
-import { OrthographicCamera, Mesh, Color, Vector3 } from '../threejs/three.js'
+import { OrthographicCamera, Mesh, Color, Vector3 } from '../libs/three.js'
 import { randomIntegerInRange, randomNumberInRange } from '../utils/index'
-import { gsap } from  '../gsap/gsap'
+import { gsap } from  '../libs/gsap'
 import Base from './Base'
 import Cube from './Cube'
 import Hud from '../ui/GameHud'

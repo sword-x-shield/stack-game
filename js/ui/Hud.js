@@ -1,5 +1,5 @@
 import Base from '../object/Base'
-import { OrthographicCamera, WebGLRenderer, Mesh, PlaneGeometry,CanvasTexture, Scene, LinearFilter, MeshBasicMaterial } from '../threejs/three.js'
+import { OrthographicCamera, WebGLRenderer, Mesh, PlaneGeometry,CanvasTexture, Scene, LinearFilter, MeshBasicMaterial } from '../libs/three.js'
 /**
  * 平视显示器的基类
  */

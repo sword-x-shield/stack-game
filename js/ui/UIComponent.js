@@ -1,4 +1,4 @@
-import {  Mesh, PlaneGeometry,CanvasTexture,LinearFilter,MeshBasicMaterial,TextureLoader, Vector3 } from '../threejs/three.js'
+import {  Mesh, PlaneGeometry,CanvasTexture,LinearFilter,MeshBasicMaterial,TextureLoader, Vector3 } from '../libs/three.js'
 const defaultConfig = {
   x: 0,
   y: 0,

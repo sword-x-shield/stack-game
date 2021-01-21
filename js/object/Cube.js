@@ -1,4 +1,4 @@
-import {Color,BoxBufferGeometry,MeshToonMaterial,Mesh} from '../threejs/three.js'
+import {Color,BoxBufferGeometry,MeshToonMaterial,Mesh} from '../libs/three.js'
 /**
  * 盒子类
  * @param {BoxBufferGeometry} geo 盒子的几何对象
