@@ -12,12 +12,12 @@ export default class ScoreText extends UIComponent {
   constructor(scene) {
     super(scene,
     {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: innerWidth,
+      height: innerHeight,
       text: 'Stack',
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 5,
-      fontSize: 50
+      x: 0,
+      y: innerHeight/3,
+      fontSize: 54
     })
   }
   /**

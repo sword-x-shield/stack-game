@@ -17,4 +17,11 @@ export default class Cube {
     this.mesh = new Mesh(this.geo, this.material);
     this.mesh.position.set(x,y,z);
   }
+  /**
+   * 设置盒子颜色
+   * @param {Color} color 新颜色
+   */
+  setColor(color) {
+    this.mesh.material = this.material = new MeshToonMaterial({color, flatShading: true})
+  }
 }

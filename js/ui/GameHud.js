@@ -1,5 +1,6 @@
 import Hud from './Hud'
 import ScoreText from './ScoreText'
+import StartBtn from './StartBtn'
 
 /**
  * 游戏菜单
@@ -11,8 +12,13 @@ export default class GameHud extends Hud {
    */
   constructor(renderer) {
     super(renderer)
+    // 初始化分数与标题
     this.scoreComp = new ScoreText(this.scene)
     this.scoreComp.addToScene()
+    // 初始化开始按钮
+    this.startBtn = new StartBtn(this.scene)
+    this.startBtn.addToScene()
+
     this.bindEvent()
   }
   /**
@@ -36,6 +42,7 @@ export default class GameHud extends Hud {
 
   }
   startGame() {
+   this.startBtn.removeFromScene()
   }
   /**
    * @todo 暂停游戏

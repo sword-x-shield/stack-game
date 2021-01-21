@@ -5,7 +5,6 @@ import { gsap } from  '../gsap/gsap'
 import Base from './Base'
 import Cube from './Cube'
 import Hud from '../ui/GameHud'
-import eventEmiter from '../utils/eventEmiter.js'
 /**
  * 游戏本体类
  * @extends Base
@@ -83,16 +82,6 @@ export default class Stack extends Base {
     this.camera = camera;
   }
   /**
-   * 创建一个盒子
-   * @param {Object} cubeParams 盒子的参数
-   * @returns {Mesh} 盒子的网格对象
-   */
-  createCube(cubeParams) {
-    const cube = new Cube(cubeParams)
-    this.scene.add(cube.mesh);
-    return cube.mesh
-  }
-  /**
    * 创建hud
    */
   createHud() {
@@ -102,9 +91,16 @@ export default class Stack extends Base {
    * 为场景添加全局的绑定事件
    */
   addEvent() {
-    wx.onTouchStart((result) => {
-      this.level === 0 ? this.startGame() : this.cutOverlap()
-    })
+   document.addEventListener('touchstart',() => {
+     this.state === 'running' && this.cutOverlap()
+   })
+   this.state === 'running' && this.cutOverlap()
+   $on('stateChange', state => {
+     if(state === 'running') {
+      this.state = 'running'
+      this.startGame()
+     }
+   })
   }
   /**
    * 场景初始化
@@ -113,12 +109,7 @@ export default class Stack extends Base {
     this.createScene();
     this.createCamera();
     this.createRenderer();
-    const baseParams = { ...this.cubeParams };
-    const baseHeight = 2.5;
-    baseParams.height = baseHeight;
-    baseParams.y -= (baseHeight - this.cubeParams.height) / 2;
-    const base = this.createCube(baseParams);
-    this.cube = base;
+    this.resetCube()
     this.createLight();
     this.updateColor();
     this.addEvent();
@@ -129,14 +120,47 @@ export default class Stack extends Base {
    * 开始游戏
    */
   startGame() {
-    this.stateChange('running')
+    // 清空可能存在的上一局
+    this.createNewStack()
     this.nextLevel()
+  }
+  /**删掉原有塔，创建一个新的空白塔 */
+  createNewStack() {
+    const meshs = this.scene.children.filter(node => node instanceof Mesh)
+    meshs.forEach(i => this.scene.remove(i))
+    this.level = 0
+    this.currentY = 0
+    this.speed = 0.02
+    this.colorOffset = randomIntegerInRange(0, 255);
+    this.resetCube()
+    this.updateColor()
+    this.resetCameraHeight()
+  }
+  /**
+   * 创建一个盒子
+   * @param {Object} cubeParams 盒子的参数
+   * @returns {Mesh} 盒子的网格对象
+   */
+  createCube(cubeParams) {
+    const cube = new Cube(cubeParams)
+    this.scene.add(cube.mesh);
+    return cube.mesh
+  }
+  /** 重置盒子 */
+  resetCube() {
+    this.cubeParams = { width: 1, height: 0.2, depth: 1, x: 0, y: 0, z: 0, color: new Color("#d9dfc8") }
+    const baseParams = { ...this.cubeParams };
+    const baseHeight = 2.5;
+    baseParams.height = baseHeight;
+    baseParams.y -= (baseHeight - this.cubeParams.height) / 2;
+    const base = this.createCube(baseParams);
+    this.cube = base;
   }
   /**
    * 切割方块，当用户点击放置方块时，判断是否游戏结束，未结束则切割保留有效的部分。
    */
   cutOverlap() {
-    const { cubeParams, moveEdge,cube, moveAxis, camera } = this;
+    const { cubeParams, moveEdge,cube, moveAxis } = this;
     const curPosition = cube.position[moveAxis]
     const prevPosition = cubeParams[moveAxis]
     const direction = Math.sign(curPosition - prevPosition)
@@ -251,6 +275,22 @@ export default class Stack extends Base {
       y: this.lookAtPosition.y,
       duration: 0.4
     });
+  }
+  /**
+   * 重置相机高度
+   */
+  resetCameraHeight() {
+    this.cameraPosition = new Vector3(2, 2, 2);
+    this.lookAtPosition = new Vector3(0,0,0);
+    gsap.to(this.cameraPosition, {
+      y: this.cameraPosition.y,
+      duration: 0.4
+    })
+    gsap.to(this.camera.lookAt, {
+      y: this.lookAtPosition.y,
+      duration: 0.4
+    })
+
   }
   /**
    * 更新游戏当前状态
