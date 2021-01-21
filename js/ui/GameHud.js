@@ -1,5 +1,6 @@
 import Hud from './Hud'
 import ScoreText from './ScoreText'
+import CoverScoreText from './CoverScoreText'
 import StartBtn from './StartBtn'
 
 /**
@@ -18,7 +19,8 @@ export default class GameHud extends Hud {
     // 初始化开始按钮
     this.startBtn = new StartBtn(this.scene)
     this.startBtn.addToScene()
-
+    // 初始化操作评分
+    this.coverScoreComp = new CoverScoreText(this.scene)
     this.bindEvent()
   }
   /**
@@ -34,6 +36,7 @@ export default class GameHud extends Hud {
       stateMap[state].bind(this)()
     })
     $on('levelChange',level => this.scoreComp.setScore(level - 1))
+    $on('coverChange',cover => this.coverScoreComp.setCover(cover))
   }
   /**
    * 游戏结束事件

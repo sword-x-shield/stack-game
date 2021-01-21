@@ -79,13 +79,7 @@ export default class UIComponent {
    * @param {Number?} width 画布之宽，只有未设定样式时需要此参数
    */
   getFill(ctx,fillStyle, width) {
-    if(!fillStyle) {
-      const gradient = ctx.createLinearGradient(0,0,width,0);
-      gradient.addColorStop(0, "#FAF8F9")
-      gradient.addColorStop(1, "#F0EFF0")
-      return gradient
-    }
-    return fillStyle
+    return fillStyle || '#fff'
   }
   /** 绘制画布
    * @param {CanvasRenderingContext2D} ctx canvas画布对象
@@ -96,7 +90,7 @@ export default class UIComponent {
     ctx.restore()
     ctx.fillStyle = this.getFill(ctx,fillStyle,width)
     ctx.textAlign = "center"
-    ctx.font = `${fontSize}px Arial bold`
+    ctx.font = `${fontSize}px Impact`
     ctx.fillText(
       text,
       width / 2,

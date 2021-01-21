@@ -1,0 +1,53 @@
+import UIComponent from './UIComponent'
+/**
+ * 当前重合度得分
+ * @extends UIComponent
+ */
+export default class ScoreText extends UIComponent {
+  /**
+   * 
+   * @param {*} scene 需要显示在上面场景
+   * 
+   */
+  constructor(scene) {
+    super(scene,
+    {
+      width: innerWidth,
+      height: innerHeight,
+      text: '0',
+      x: 0,
+      y: innerHeight / 4 + 20,
+      fontSize: 30
+    })
+  }
+  /**
+   * 
+   * @param {String|Number} score 分数
+   */
+  setCover(score) {
+    let config = {
+      text: 'B A D',
+      fillStyle: '#F56C6C'
+    }
+    if(score > 95) {
+      config = {
+        text: 'P E R F E C T',
+        fillStyle: '#7BFF39'
+      }
+    }else if(score > 85) {
+      config = {
+        text: 'G O O D',
+        fillStyle: '#F1BF74'
+      }
+    }else if(score > 60) {
+      config = {
+        text: 'O K',
+        fillStyle: '#FFF'
+      }
+    }
+    this.update(config)
+    setTimeout(() => {
+      this.removeFromScene()
+    }, 1500)
+  }
+}

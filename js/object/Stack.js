@@ -192,6 +192,8 @@ export default class Stack extends Base {
     overlapcubeParams.y = currentY;
     overlapcubeParams[moveEdge] = overlap;
     overlapcubeParams[moveAxis] = overlapCubePosition;
+    // 广播重合度
+    $emit('coverChange', (overlap/this.cubeParams[moveEdge] * 100).toFixed(1))
     this.createCube(overlapcubeParams);
     this.cubeParams = overlapcubeParams
   }
@@ -258,7 +260,7 @@ export default class Stack extends Base {
     this.cube.position[this.moveAxis] = this.moveLimit * -1;
     if (this.level >= 1) {
       this.updateCameraHeight();
-      this.speed < this.speedLimit && (this.speed += 0.002)
+      this.speed < this.speedLimit && (this.speed += 0.0005)
     }
   }
   /**
