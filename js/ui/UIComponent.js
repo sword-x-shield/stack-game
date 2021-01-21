@@ -6,6 +6,8 @@ const defaultConfig = {
   height: 100,
   fillStyle: '',
   fontSize: 16,
+  fontWeight: 'normal',
+  fonyFamily: 'Arial',
   callback: undefined,
   background: undefined,
   texture: undefined
@@ -85,12 +87,12 @@ export default class UIComponent {
    * @param {CanvasRenderingContext2D} ctx canvas画布对象
    */
   draw(ctx) {
-    const { width, height, fillStyle, fontSize, text } = this.params
+    const { width, height, fillStyle, fontSize, fontFamily,fontWeight, text } = this.params
     ctx.clearRect(0,0,width,height)
     ctx.restore()
     ctx.fillStyle = this.getFill(ctx,fillStyle,width)
     ctx.textAlign = "center"
-    ctx.font = `${fontSize}px Impact`
+    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
     ctx.fillText(
       text,
       width / 2,

@@ -2,6 +2,7 @@ import Stack from './object/Stack'
 import EventEmiter  from './utils/eventEmiter'
 window.$on = EventEmiter.on.bind(EventEmiter)
 window.$emit = EventEmiter.emit.bind(EventEmiter)
+import Audio from './object/Audio'
 /**
  * 游戏主函数
  */

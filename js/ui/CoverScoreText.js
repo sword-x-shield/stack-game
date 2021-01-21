@@ -17,7 +17,8 @@ export default class ScoreText extends UIComponent {
       text: '0',
       x: 0,
       y: innerHeight / 4 + 20,
-      fontSize: 30
+      fontSize: 30,
+      fontFamily: 'Excluded'
     })
   }
   /**

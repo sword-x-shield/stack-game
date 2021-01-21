@@ -5,6 +5,7 @@ import { gsap } from  '../gsap/gsap'
 import Base from './Base'
 import Cube from './Cube'
 import Hud from '../ui/GameHud'
+import Audio from './Audio'
 /**
  * 游戏本体类
  * @extends Base
@@ -40,6 +41,8 @@ export default class Stack extends Base {
   moveLimit = 1.2;
   constructor() {
     super()
+    this.bgm = new Audio('audio/bgm.mp3',{loop:true,autoplay: true})
+    this.bgm.play()
     this.cameraParams = {};
     this.updateCameraParams();
     this.cameraPosition = new Vector3(2, 2, 2);
@@ -50,6 +53,7 @@ export default class Stack extends Base {
     this.cubeParams = { width: 1, height: 0.2, depth: 1, x: 0, y: 0, z: 0, color: new Color("#d9dfc8") };
     this.state = 'paused'
     this.speed = 0.02
+    this.cutAudio = new Audio('audio/cut.mp3', { loop: false, autoplay: false })
   }
   /**
    * 基于屏幕大小更新当前相机的各项参数
@@ -173,6 +177,8 @@ export default class Stack extends Base {
     if(overlap <= 0) {
       this.gameOver()
       return
+    }else {
+      this.cutAudio.play()
     }
     this.createWastedCube(prevPosition, direction, edge, overlap)
     this.createOverlapCube(curPosition,prevPosition,overlap)
