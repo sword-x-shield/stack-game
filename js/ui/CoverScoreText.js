@@ -26,6 +26,7 @@ export default class ScoreText extends UIComponent {
    * @param {String|Number} score 分数
    */
   setCover(score) {
+    this.timer && clearTimeout(this.timer)
     let config = {
       text: 'B A D',
       fillStyle: '#F56C6C'
@@ -47,7 +48,7 @@ export default class ScoreText extends UIComponent {
       }
     }
     this.update(config)
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.removeFromScene()
     }, 1500)
   }
