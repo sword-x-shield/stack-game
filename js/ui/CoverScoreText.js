@@ -1,6 +1,6 @@
 import UIComponent from './UIComponent'
 /**
- * 当前重合度得分
+ * 当前重合度得分，也用于显示是否为新的历史最高分
  * @extends UIComponent
  */
 export default class ScoreText extends UIComponent {
@@ -39,12 +39,12 @@ export default class ScoreText extends UIComponent {
     }else if(score > 85) {
       config = {
         text: 'G O O D',
-        fillStyle: '#F1BF74'
+        fillStyle: '#FFF'
       }
     }else if(score > 60) {
       config = {
         text: 'O K',
-        fillStyle: '#FFF'
+        fillStyle: '#F1BF74'
       }
     }
     this.update(config)

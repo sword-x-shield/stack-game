@@ -13,6 +13,7 @@ export default class Hud  {
     this.width = window.innerWidth
     this.height = window.innerHeight
     this.devicePixelRatio = window.devicePixelRatio
+    this.onlineContext = wx.getOpenDataContext()
     this.createScene()
     this.createCamera()
   }

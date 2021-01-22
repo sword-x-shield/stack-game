@@ -29,4 +29,10 @@ export default class ScoreText extends UIComponent {
   setScore(score) {
     this.update({text: score})
   }
+  /**
+   * 获取当前得分
+   */
+  getScore() {
+    return +this.params.text
+  }
 }

@@ -42,7 +42,13 @@ export default class GameHud extends Hud {
    * 游戏结束事件
    */
   gameOver() {
-
+    const curScore = this.scoreComp.getScore()
+    const highScore = localStorage.getItem('highScore') || 0
+    if(curScore > highScore) {
+      this.coverScoreComp.update({text: 'New High Score'})
+      localStorage.setItem('highScore', curScore)
+      this.onlineContext.postMessage(JSON.stringify({event: 'uploadHighScore', data: curScore}))
+    }
   }
   startGame() {
    this.startBtn.removeFromScene()
