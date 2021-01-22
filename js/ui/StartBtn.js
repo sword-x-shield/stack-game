@@ -33,7 +33,9 @@ export default class StartBtn extends UIComponent {
   watchSate() {
     $on('stateChange',state => {
       this.state = state
-      state === 'running' ? this.removeFromScene() : this.addToScene()
+      setTimeout(() => {
+        state === 'running' ? this.removeFromScene() : this.addToScene()
+      }, 300)
     })
   }
 
