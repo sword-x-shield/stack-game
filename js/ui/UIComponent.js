@@ -68,8 +68,8 @@ export default class UIComponent {
       return
     }
     this.canvas = wx.createCanvas()
-    this.canvas.width = width
-    this.canvas.height = height
+    this.canvas.width = width * devicePixelRatio
+    this.canvas.height = height * devicePixelRatio
     this.ctx = this.canvas.getContext('2d')
     this.draw(this.ctx)
     this.material = this.covertToMaterial(this.canvas)
@@ -88,15 +88,17 @@ export default class UIComponent {
    */
   draw(ctx) {
     const { width, height, fillStyle, fontSize, fontFamily,fontWeight, text } = this.params
-    ctx.clearRect(0,0,width,height)
+    const realWidth = width * devicePixelRatio
+    const realHeight = height * devicePixelRatio
+    ctx.clearRect(0,0,realWidth,realHeight)
     ctx.restore()
     ctx.fillStyle = this.getFill(ctx,fillStyle,width)
     ctx.textAlign = "center"
-    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+    ctx.font = `${fontWeight} ${fontSize * devicePixelRatio}px ${fontFamily}`
     ctx.fillText(
       text,
-      width / 2,
-      height / 2
+      realWidth / 2,
+      realHeight / 2
     )
     ctx.save()
   }
