@@ -123,6 +123,7 @@ export default class UIComponent {
       transparent: true,
       opacity: 1
     })
+    this.texture = texture
     return material
   }
   /**

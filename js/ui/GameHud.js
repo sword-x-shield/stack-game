@@ -2,7 +2,7 @@ import Hud from './Hud'
 import ScoreText from './ScoreText'
 import CoverScoreText from './CoverScoreText'
 import StartBtn from './StartBtn'
-
+import RankList from './RankList'
 /**
  * 游戏菜单
  * @extends Hud
@@ -22,6 +22,13 @@ export default class GameHud extends Hud {
     // 初始化操作评分
     this.coverScoreComp = new CoverScoreText(this.scene)
     this.bindEvent()
+    // 初始化排行榜
+    this.rankComp = new RankList(this.scene)
+    // 轮询更新排行榜
+    setInterval(() => {
+      this.rankComp.updateRanking()
+    }, 200)
+
   }
   /**
    * 绑定发布订阅
@@ -49,9 +56,11 @@ export default class GameHud extends Hud {
       localStorage.setItem('highScore', curScore)
       this.onlineContext.postMessage(JSON.stringify({event: 'uploadHighScore', data: curScore}))
     }
+   this.rankComp.addToScene()
   }
   startGame() {
    this.startBtn.removeFromScene()
+   this.rankComp.removeFromScene()
   }
   /**
    * @todo 暂停游戏
