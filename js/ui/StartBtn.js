@@ -35,7 +35,7 @@ export default class StartBtn extends UIComponent {
       this.state = state
       setTimeout(() => {
         state === 'running' ? this.removeFromScene() : this.addToScene()
-      }, 300)
+      }, 500)
     })
   }
 

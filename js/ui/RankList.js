@@ -15,7 +15,8 @@ export default class RankList extends UIComponent {
       width: innerWidth - 40,
       height: innerHeight / 2.7,
       x: 0,
-      y: 0
+      y: 0,
+      text: ''
     })
 
   }
@@ -25,11 +26,17 @@ export default class RankList extends UIComponent {
     this.canvas = this.openContext.canvas
     this.canvas.width = width * devicePixelRatio
     this.canvas.height = height * devicePixelRatio
+    this.postMessage()
     this.material = this.covertToMaterial(this.canvas)
   }
   addToScene() {
+    this.postMessage()
+    setTimeout(() => {
+      this.scene.add(this.mesh)
+    },200)
+  }
+  postMessage() {
     this.openContext.postMessage(JSON.stringify({event: 'drawRank'}))
-    this.scene.add(this.mesh)
   }
   updateRanking() {
     this.texture.needsUpdate = true
