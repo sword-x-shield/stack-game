@@ -1,5 +1,8 @@
 // 初始化用户最高分
 let userHighScore = 0 
+// 获取用户手机缩放比
+const {pixelRatio} = wx.getSystemInfoSync()
+
 wx.getUserCloudStorage({
   keyList: ['score'],
   success: ({KVDataList}) => {
@@ -88,8 +91,8 @@ function drawSharedCanvas(players) {
   players.forEach((player,index) => {
     const {avatarUrl,nickname,score} = player
     drawAvatar(context,avatarUrl, AVATAR_R + 3 * AVATAR_R * index ,35 * VH, AVATAR_R,index)
-    drawText(context,nickname, AVATAR_R + 3 * AVATAR_R * index + AVATAR_R, 60 * VH + AVATAR_R,'bold 32px Arial')
-    drawText(context,score, AVATAR_R + 3 * AVATAR_R * index + AVATAR_R, 90 * VH, '70px Excluded' )
+    drawText(context,nickname, AVATAR_R + 3 * AVATAR_R * index + AVATAR_R, 60 * VH + AVATAR_R,`bold ${16 * pixelRatio}px Arial`)
+    drawText(context,score, AVATAR_R + 3 * AVATAR_R * index + AVATAR_R, 90 * VH, `${40 * pixelRatio}px Excluded` )
   })
 }
 
@@ -105,16 +108,13 @@ function drawWrapper(ctx,VW,VH) {
   ctx.fillStyle = '#000'
   ctx.fillRect(0,0,100 * VW, 20 * VH )
   // 绘制标题区文字
-  ctx.fillStyle = '#fff'
-  ctx.font = '80px Excluded'
-  ctx.textAlign = 'center'
-  ctx.fillText('T O P 3', 50 * VW , 15 * VH)
+  drawText(ctx,'T O P 3', 50 * VW, 15 * VH, `${40 * pixelRatio}px  Excluded`)
   ctx.restore()
 }
 //绘制排名
 function drawIndex(ctx,text,x,y) {
   ctx.save()
-  ctx.font = '70px Excluded'
+  ctx.font = `${32 * pixelRatio}px Excluded`
   ctx.textAlign = 'center'
   ctx.fillStyle = '#7BFF39'
   ctx.strokeStyle = '#fff'
